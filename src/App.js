@@ -1,22 +1,101 @@
-/* eslint-disable jsx-a11y/no-distracting-elements */
+import moment from 'moment';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 
 
+
+
 function App() {
+
+  const [showImage, setShowImage] = useState();
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [number, setNumb] = useState("");
+  const [descript, setDesc] = useState("");
+
+  const [data, setData] = useState([])
+
+
+ const DisplayImage = (e) => {
+   const file = e.target.files[0];
+   const res = URL.createObjectURL(file);
+   setShowImage(res);
+ };
+
+ const AddNew = () => {
+   const items = {
+    id: data.length + 1,
+    icon: name.charAt(0,),
+    name: name, 
+    address: address,
+    number: number,
+    avatar: showImage,
+    descript: descript,
+    time: Date.now(),
+   }
+   setData([...data, items]);
+
+   setName("");
+   setAddress("");
+   setNumb("");
+   setDesc("");
+ }
+
+ const Del = (id) => {
+   const remove = data.filter((el) => el.id !== id);
+   setData(remove);
+ }
+
+
+
+ useEffect(() => {
+   const save = JSON.parse(localStorage.getItem("store"));
+   setData(save);
+ }, [])
+
+ useEffect(() => {
+  localStorage.setItem("store", JSON.stringify(data));
+}, [data])
+
   return (
     <Container>
       <PostCard>
         <InputHolder>
-          <Image />
+          <Image src={showImage}/>
           <FormInput>
-            <input type="file"/>
-            <input placeholder="Name"/>
-            <input placeholder="Address"/>
-            <input placeholder="Phone Number"/>
-            <textarea rows="5" cols="50" placeholder="Description"/>
+            <input type="file" onChange={DisplayImage} />
+            <input placeholder="Name" 
+            value={name} 
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
+            />
+
+            <input placeholder="Address"
+              value={address}
+              onChange={(e) => {
+                setAddress(e.target.value)
+              }}
+            />
+
+            <input placeholder="Phone Number"
+              value={number}
+              onChange={(e) => {
+                setNumb(e.target.value)
+              }}
+            />
+
+            <textarea  maxlength="50" rows="5" cols="50" placeholder="Description"
+              value={descript}
+              onChange={(e) => {
+                setDesc(e.target.value)
+              }}
+            />
           </FormInput>
         </InputHolder>
-        <button>
+        <button onClick={() => {
+          AddNew();
+        }}>
           Submit
         </button>
       </PostCard>
@@ -24,18 +103,24 @@ function App() {
       <Info><marquee>Displayed Cards Here</marquee></Info>
 
       <CardWrapper>
-        <Card>
-          <Top>
-            <div>Icon</div>
-            <div>Del</div>
-          </Top>
-          <Border></Border>
-          <ProfImage />
-          <Name>Name</Name>
-          <Address>Address</Address>
-          <PhoneNum>Phone</PhoneNum>
-          <Descr>Description</Descr>
+        {data.map((props) => (
+          <Card key = {props.id}>
+            <Top>
+              <div>{props.icon}</div>
+              <div onClick={() => {
+                Del()
+                console.log("Deleted")
+              }}>Del</div>
+            </Top>
+            <Border></Border>
+            <ProfImage src={props.avatar}/>
+            <Name>{props.name}</Name>
+            <Address>{props.address}</Address>
+            <PhoneNum>{props.number}</PhoneNum>
+            <Descr>{props.descript}</Descr>
+           Posted: {moment(props.time).fromNow()}
         </Card>
+        ))}
       </CardWrapper>
     </Container>
   );
@@ -71,6 +156,12 @@ background-color: #38393A;
     margin: 8px;
     border-radius: 5px;
     cursor: pointer;
+
+    :hover {
+      ${'' /* background-color: lightgreen; */}
+      box-shadow: 2px 2px 5px #ccc;
+    }
+
   }
 
 @media screen and (max-width: 650px) {
@@ -94,7 +185,6 @@ border-radius: 8px;
 `
 
 const Image = styled.img`
-background-color: red;
 height: 300px;
 width: 300px;
 border-radius: 8px;
@@ -150,7 +240,7 @@ const CardWrapper = styled.div`
 `
 
 const Card = styled.div`
-  height: 350px;
+  height: auto;
   width: 280px;
   display: flex;
   flex-direction: column;
@@ -181,6 +271,8 @@ div{
   border-radius: 50%;
   height: 35px;
   width: 35px;
+  cursor: pointer;
+  text-transform: uppercase;
 }
 `
 const Border = styled.div`
@@ -192,7 +284,7 @@ const ProfImage = styled.img`
 display: flex;
 justify-content: center;
 align-items: center;
-object-fit: cover;
+object-fit: center;
 height: 150px;
 width: 150px;
 border-radius: 50%;
@@ -201,10 +293,22 @@ margin-top: -70px;
 background-color: whitesmoke
 `
 const Name = styled.div`
+text-align: center;
+height: 20px;
+width: 97%;
 `
 const Address = styled.div`
+text-align: center;
+height: 20px;
+width: 97%;
 `
 const PhoneNum = styled.div`
+text-align: center;
+height: 25px;
+width: 97%;
 `
 const Descr = styled.div`
+text-align: center;
+width: 97%;
+height: 90px
 `
