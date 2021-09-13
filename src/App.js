@@ -1,6 +1,7 @@
 import moment from 'moment';
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
+import {DeleteOutlined} from '@ant-design/icons';
 
 
 
@@ -39,13 +40,13 @@ function App() {
    setAddress("");
    setNumb("");
    setDesc("");
+   setShowImage("");
  }
 
- const Del = (id) => {
-   const remove = data.filter((el) => el.id !== id);
-   setData(remove);
- }
-
+ const deleteItem = (id) => {
+  const removeItem = data.filter((el) => el.id !== id);
+  setData(removeItem);
+};
 
 
  useEffect(() => {
@@ -107,10 +108,10 @@ function App() {
           <Card key = {props.id}>
             <Top>
               <div>{props.icon}</div>
-              <div onClick={() => {
-                Del()
-                console.log("Deleted")
-              }}>Del</div>
+              <div style={{color:"red", fontSize:"22px"}}
+              onClick={() => {
+                deleteItem()
+              }}><DeleteOutlined /></div>
             </Top>
             <Border></Border>
             <ProfImage src={props.avatar}/>
