@@ -14,7 +14,7 @@ function App() {
   const [number, setNumb] = useState("");
   const [descript, setDesc] = useState("");
 
-  const [data, setData] = useState([])
+  const [myData, setMyData] = useState([])
 
 
  const DisplayImage = (e) => {
@@ -23,9 +23,14 @@ function App() {
    setShowImage(res);
  };
 
+ const deleteItem = (id) => {
+  const removeItem = myData.filter((el) => el.id !== id);
+  setMyData(removeItem);
+};
+
  const AddNew = () => {
    const items = {
-    id: data.length + 1,
+    id: myData.length + 1,
     icon: name.charAt(0,),
     name: name, 
     address: address,
@@ -34,7 +39,7 @@ function App() {
     descript: descript,
     time: Date.now(),
    }
-   setData([...data, items]);
+   setMyData([...myData, items]);
 
    setName("");
    setAddress("");
@@ -43,20 +48,16 @@ function App() {
    setShowImage("");
  }
 
- const deleteItem = (id) => {
-  const removeItem = data.filter((el) => el.id !== id);
-  setData(removeItem);
-};
 
-
+ 
  useEffect(() => {
-   const save = JSON.parse(localStorage.getItem("store"));
-   setData(save);
- }, [])
+  const saveItems = JSON.parse(localStorage.getItem("store"));
+  setMyData(saveItems);
+}, []);
 
- useEffect(() => {
-  localStorage.setItem("store", JSON.stringify(data));
-}, [data])
+useEffect(() => {
+  localStorage.setItem("store", JSON.stringify(myData));
+}, [myData]);
 
   return (
     <Container>
@@ -86,7 +87,7 @@ function App() {
               }}
             />
 
-            <textarea  maxlength="50" rows="5" cols="50" placeholder="Description"
+            <textarea maxlength="150" rows="5" cols="50" placeholder="Description"
               value={descript}
               onChange={(e) => {
                 setDesc(e.target.value)
@@ -104,14 +105,14 @@ function App() {
       <Info><marquee>Displayed Cards Here</marquee></Info>
 
       <CardWrapper>
-        {data.map((props) => (
+        {myData.map((props) => (
           <Card key = {props.id}>
             <Top>
               <div>{props.icon}</div>
-              <div style={{color:"red", fontSize:"22px"}}
+              <button style={{color:"red", fontSize:"22px"}}
               onClick={() => {
-                deleteItem()
-              }}><DeleteOutlined /></div>
+                deleteItem(props.id);
+              }}><DeleteOutlined /></button>
             </Top>
             <Border></Border>
             <ProfImage src={props.avatar}/>
@@ -147,6 +148,7 @@ flex-direction: column;
 align-items:center;
 border: 1px solid whitesmoke;
 background-color: #38393A;
+border-radius: 10px;
 
    button {
     height: 40px;
@@ -166,7 +168,7 @@ background-color: #38393A;
   }
 
 @media screen and (max-width: 650px) {
-  width: 80%
+  width: 90%
 }
 `
 
@@ -252,7 +254,7 @@ const Card = styled.div`
   border: 1px solid white;
   box-shadow: 5px 3px 7px #ccc;
 
-  @media screen and (max-width: 330px) {
+  @media screen and (max-width: 650px) {
     width: 90%
   }
 `
@@ -274,6 +276,10 @@ div{
   width: 35px;
   cursor: pointer;
   text-transform: uppercase;
+}
+
+button{
+  border-radius: 50%;
 }
 `
 const Border = styled.div`
