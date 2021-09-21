@@ -220,6 +220,7 @@ width: 250px;
     resize: none;
     border-radius: 5px;
     padding-left: 8px;
+  }
 `
 
 const Info = styled.div`
